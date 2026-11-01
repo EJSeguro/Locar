@@ -19,11 +19,11 @@ composer setup
 
 Depois, preencha no `.env`:
 
-| Variável | Descrição |
-|---|---|
-| `DB_CONNECTION` | `pgsql` |
-| `DB_URL` | Connection string do Neon. Use o endpoint direto, sem `-pooler` no host: as migrations falham pelo pooler. |
-| `INVERTEXTO_TOKEN` | Token da API da Invertexto |
+| Variável           | Descrição                                                                                                  |
+| ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `DB_CONNECTION`    | `pgsql`                                                                                                    |
+| `DB_URL`           | Connection string do Neon. Use o endpoint direto, sem `-pooler` no host: as migrations falham pelo pooler. |
+| `INVERTEXTO_TOKEN` | Token da API da Invertexto                                                                                 |
 
 Rode as migrations:
 
@@ -50,22 +50,22 @@ Os demais admins e gestores são criados pela API, por um admin.
 
 Todas as rotas ficam em `/api/v1`. Exceto o login, todas exigem o header `Authorization: Bearer <token>`.
 
-| Método | Rota | Acesso | Descrição |
-|---|---|---|---|
-| POST | `/login` | público | Retorna o token |
-| POST | `/logout` | autenticado | Revoga o token atual |
-| GET | `/me` | autenticado | Usuário logado |
-| GET | `/users` | admin | Lista usuários |
-| POST | `/users` | admin | Cria admin ou gestor |
-| GET | `/users/{id}` | admin | Detalha usuário |
-| DELETE | `/users/{id}` | admin | Remove usuário |
-| GET | `/fipe/brands/{tipo}` | admin, gestor | Marcas (1 carro, 2 moto, 3 caminhão) |
-| GET | `/fipe/models/{marca}` | admin, gestor | Modelos da marca |
-| GET | `/fipe/years/{codigo_fipe}` | admin, gestor | Anos e preços do modelo |
-| GET | `/vehicles` | admin, gestor | Lista veículos |
-| POST | `/vehicles` | admin, gestor | Cadastra veículo |
-| GET | `/vehicles/{id}` | admin, gestor | Detalha veículo |
-| DELETE | `/vehicles/{id}` | admin, gestor | Remove veículo |
+| Método | Rota                        | Acesso        | Descrição                            |
+| ------ | --------------------------- | ------------- | ------------------------------------ |
+| POST   | `/login`                    | público       | Retorna o token                      |
+| POST   | `/logout`                   | autenticado   | Revoga o token atual                 |
+| GET    | `/me`                       | autenticado   | Usuário logado                       |
+| GET    | `/users`                    | admin         | Lista usuários                       |
+| POST   | `/users`                    | admin         | Cria admin ou gestor                 |
+| GET    | `/users/{id}`               | admin         | Detalha usuário                      |
+| DELETE | `/users/{id}`               | admin         | Remove usuário                       |
+| GET    | `/fipe/brands/{tipo}`       | admin, gestor | Marcas (1 carro, 2 moto, 3 caminhão) |
+| GET    | `/fipe/models/{marca}`      | admin, gestor | Modelos da marca                     |
+| GET    | `/fipe/years/{codigo_fipe}` | admin, gestor | Anos e preços do modelo              |
+| GET    | `/vehicles`                 | admin, gestor | Lista veículos                       |
+| POST   | `/vehicles`                 | admin, gestor | Cadastra veículo                     |
+| GET    | `/vehicles/{id}`            | admin, gestor | Detalha veículo                      |
+| DELETE | `/vehicles/{id}`            | admin, gestor | Remove veículo                       |
 
 ### Criar gestor
 
