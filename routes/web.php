@@ -17,3 +17,16 @@ Route::get('/teste-blade', function () {
 route::get('/veiculos', function () {
     return view('cliente.veiculos');
 })->name('veiculos');
+
+
+Route::get('/teste-detalhes', function () {
+    $veiculo = (object) [
+        'brand' => 'Chevrolet',
+        'model' => 'Onix',
+        'model_year' => 2024,
+        'fuel' => 'Flex',
+        'daily_rate' => 120.00
+    ];
+
+    return view('cliente.detalhes', compact('veiculo'));
+});

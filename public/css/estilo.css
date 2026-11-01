@@ -77,3 +77,35 @@ nav a:hover {
 .veiculo button:hover {
     background-color: #38bdf8;
 }
+
+
+.detalhes-veiculo {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    max-width: 500px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.detalhes-veiculo h3 {
+    color: #1e293b;
+    font-size: 24px;
+}
+
+.detalhes-veiculo p {
+    margin: 15px 0;
+}
+
+.detalhes-veiculo button {
+    background-color: #1e293b;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.detalhes-veiculo button:hover {
+    background-color: #38bdf8;
+}

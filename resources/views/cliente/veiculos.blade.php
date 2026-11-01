@@ -10,29 +10,21 @@
 
     <div class="lista-veiculos">
 
-        <div class="veiculo">
-            <h3>Chevrolet Onix</h3>
-            <p>Ano: 2024</p>
-            <p>Categoria: Econômico</p>
-            <p>Diária: R$ 120,00</p>
-            <button>Ver detalhes</button>
-        </div>
+        @forelse($veiculos ?? [] as $veiculo)
+            <div class="veiculo">
+                <h3>{{ $veiculo->brand }} {{ $veiculo->model }}</h3>
 
-        <div class="veiculo">
-            <h3>Hyundai HB20</h3>
-            <p>Ano: 2023</p>
-            <p>Categoria: Econômico</p>
-            <p>Diária: R$ 130,00</p>
-            <button>Ver detalhes</button>
-        </div>
+                <p>Ano: {{ $veiculo->model_year }}</p>
 
-        <div class="veiculo">
-            <h3>Jeep Compass</h3>
-            <p>Ano: 2024</p>
-            <p>Categoria: SUV</p>
-            <p>Diária: R$ 250,00</p>
-            <button>Ver detalhes</button>
-        </div>
+                <p>Combustível: {{ $veiculo->fuel }}</p>
+
+                <p>Diária: R$ {{ number_format($veiculo->daily_rate, 2, ',', '.') }}</p>
+
+                <button type="button">Ver detalhes</button>
+            </div>
+        @empty
+            <p>Nenhum veículo encontrado.</p>
+        @endforelse
 
     </div>
 
