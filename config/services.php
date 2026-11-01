@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'invertexto' => [
+        'token' => env('INVERTEXTO_TOKEN'),
+    ],
+
 ];
