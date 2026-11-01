@@ -9,3 +9,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__.'/settings.php';
+
+Route::get('/teste-blade', function () {
+    return view('home');
+});
+
+route::get('/veiculos', function () {
+    return view('cliente.veiculos');
+})->name('veiculos');
