@@ -11,27 +11,61 @@ O valor da diária de cada veículo é 0,15% do seu preço na tabela FIPE, consu
 - Node 22
 - Banco PostgreSQL ([Neon](https://neon.tech))
 
-## Instalação
+## Setup local
+
+### 1. Clonar e instalar
 
 ```bash
+git clone https://github.com/EJSeguro/Locar.git
+cd Locar
 composer setup
 ```
 
-Depois, preencha no `.env`:
+O `composer setup` instala as dependências PHP e Node, cria o `.env` a partir do `.env.example`, gera a `APP_KEY` e compila o front. Ele também roda as migrations no SQLite local (`database/database.sqlite`). O banco de verdade é configurado no próximo passo.
+
+### 2. Configurar o `.env`
 
 | Variável           | Descrição                                                                                                  |
 | ------------------ | ---------------------------------------------------------------------------------------------------------- |
 | `DB_CONNECTION`    | `pgsql`                                                                                                    |
 | `DB_URL`           | Connection string do Neon. Use o endpoint direto, sem `-pooler` no host: as migrations falham pelo pooler. |
-| `INVERTEXTO_TOKEN` | Token da API da Invertexto                                                                                 |
+| `INVERTEXTO_TOKEN` | Token da API da Invertexto. Sem ele, as rotas `/fipe` e o cadastro de veículos não funcionam.              |
 
-Rode as migrations:
+Peça a connection string e o token para quem administra o projeto. Não commite o `.env`.
+
+### 3. Criar as tabelas e o admin de desenvolvimento
 
 ```bash
 php artisan migrate
+php artisan db:seed
 ```
 
-Em desenvolvimento, `php artisan db:seed` cria o admin `admin@locar.com` com a senha `password`.
+O seeder cria o admin `admin@locar.com` com a senha `password`.
+
+### 4. Subir o servidor
+
+```bash
+composer dev
+```
+
+Esse comando sobe o servidor em `http://localhost:8000`, a fila e o Vite. Se você só vai mexer na API, `php artisan serve` basta.
+
+### 5. Testar o login
+
+```bash
+curl -X POST http://localhost:8000/api/v1/login \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@locar.com","password":"password"}'
+```
+
+A resposta traz um `token`. Mande esse token no header `Authorization: Bearer <token>` nas outras rotas. Sempre envie `Accept: application/json`, senão os erros voltam como redirect em vez de JSON.
+
+### Problemas comuns
+
+- **`could not find driver`**: falta habilitar a extensão `pdo_pgsql` no `php.ini`.
+- **Migrations travam ou falham no Neon**: o `DB_URL` está usando o host com `-pooler`. Troque pelo endpoint direto.
+- **Login responde 429**: o login aceita 6 tentativas por minuto. Espere um minuto.
 
 ## Produção
 
@@ -98,6 +132,8 @@ POST /api/v1/vehicles
 ```bash
 php artisan test
 ```
+
+Os testes usam SQLite em memória, então não precisam do Neon nem do `.env` preenchido.
 
 Para rodar a mesma checagem do CI (lint, tipos e testes):
 
