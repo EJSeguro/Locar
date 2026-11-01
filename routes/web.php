@@ -38,3 +38,7 @@ route::get('/teste-login', function () {
 route::get('/teste-cadastro', function () {
     return view('cadastro.cadastro');
 });
+
+route::get('/teste-locacoes', function () {
+    return view('cliente.locacoes');
+});

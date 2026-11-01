@@ -201,3 +201,31 @@ nav a:hover {
     text-align: center;
     margin-top: 20px;
 }
+
+
+.tabela-locacoes {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+}
+
+.tabela-locacoes th,
+.tabela-locacoes td {
+    padding: 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.tabela-locacoes th {
+    background-color: #1e293b;
+    color: white;
+}
+
+.tabela-locacoes tr:nth-child(even) {
+    background-color: #f4f4f4;
+}
+
+.tabela-locacoes tr:hover {
+    background-color: #e2e8f0;
+}
