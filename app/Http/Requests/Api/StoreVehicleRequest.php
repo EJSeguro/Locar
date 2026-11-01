@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreVehicleRequest extends FormRequest
@@ -11,6 +12,9 @@ class StoreVehicleRequest extends FormRequest
         $this->merge(['plate' => strtoupper(str_replace('-', '', (string) $this->input('plate')))]);
     }
 
+    /**
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [

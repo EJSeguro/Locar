@@ -10,7 +10,7 @@ class VehicleService
     public function __construct(private FipeService $fipe) {}
 
     /**
-     * @param  array{plate: string, fipe_code: string, year_id: string}  $data
+     * @param  array<string, mixed>  $data
      */
     public function create(array $data): Vehicle
     {

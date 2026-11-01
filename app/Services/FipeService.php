@@ -2,19 +2,26 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 
 class FipeService
 {
+    /**
+     * @return array<int, array{id: int, brand: string}>
+     */
     public function brands(int $type): array
     {
-        return $this->get("brands/{$type}");
+        return $this->get("brands/{$type}")->json();
     }
 
+    /**
+     * @return array<int, array{id: int, fipe_code: string, model: string, years: string}>
+     */
     public function models(int $brandId): array
     {
-        return $this->get("models/{$brandId}");
+        return $this->get("models/{$brandId}")->json();
     }
 
     /**
@@ -22,10 +29,10 @@ class FipeService
      */
     public function years(string $fipeCode): array
     {
-        return $this->get("years/{$fipeCode}");
+        return $this->get("years/{$fipeCode}")->json();
     }
 
-    private function get(string $path): array
+    private function get(string $path): Response
     {
         $response = Http::baseUrl('https://api.invertexto.com/v1/fipe')
             ->timeout(10)
@@ -37,6 +44,6 @@ class FipeService
 
         abort_if($response->failed(), 502, 'Serviço FIPE indisponível.');
 
-        return $response->json();
+        return $response;
     }
 }
