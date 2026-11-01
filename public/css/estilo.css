@@ -229,3 +229,60 @@ nav a:hover {
 .tabela-locacoes tr:hover {
     background-color: #e2e8f0;
 }
+
+
+.gerenciar-veiculos {
+    margin-top: 20px;
+}
+
+.gerenciar-veiculos button {
+    background-color: #1e293b;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.gerenciar-veiculos button:hover {
+    background-color: #38bdf8;
+}
+
+.gerenciar-veiculos table {
+    margin-top: 20px;
+}
+
+
+.botao-cadastrar {
+    display: inline-block;
+    background-color: #1e293b;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 5px;
+}
+
+.botao-cadastrar:hover {
+    background-color: #38bdf8;
+}
+
+
+.menu-gestor {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.menu-gestor a {
+    background-color: #1e293b;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.menu-gestor a:hover {
+    background-color: #38bdf8;
+}

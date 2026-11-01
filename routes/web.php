@@ -42,3 +42,44 @@ route::get('/teste-cadastro', function () {
 route::get('/teste-locacoes', function () {
     return view('cliente.locacoes');
 });
+
+
+Route::get('/teste-gestor-veiculos', function () {
+    $veiculos = [
+        (object) [
+            'id' => 1,
+            'brand' => 'Chevrolet',
+            'model' => 'Onix',
+            'model_year' => 2024,
+            'daily_rate' => 120.00
+        ]
+    ];
+
+    return view('gestor.veiculos', compact('veiculos'));
+});
+
+
+route::get('/teste-gestor-cadastrar', function () {
+    return view('gestor.cadastrar');
+});
+
+
+Route::get('/teste-gestor-editar', function () {
+    $veiculo = (object) [
+        'plate' => 'ABC1D23',
+        'brand' => 'Chevrolet',
+        'model' => 'Onix',
+        'model_year' => 2024,
+        'fuel' => 'Flex',
+        'fipe_code' => '004001-0',
+        'year_id' => '2024-1',
+        'fipe_price' => 75000.00,
+        'daily_rate' => 120.00
+    ];
+
+    return view('gestor.editar', compact('veiculo'));
+});
+
+route::get('/teste-gestor-locacoes', function () {
+    return view('gestor.locacoes');
+});
