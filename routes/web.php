@@ -83,3 +83,11 @@ Route::get('/teste-gestor-editar', function () {
 route::get('/teste-gestor-locacoes', function () {
     return view('gestor.locacoes');
 });
+
+route::get('/teste-admin', function () {
+    return view('admin.painel');
+});
+
+route::get('/teste-admin-usuarios', function () {
+    return view('admin.usuarios');
+});
