@@ -109,3 +109,95 @@ nav a:hover {
 .detalhes-veiculo button:hover {
     background-color: #38bdf8;
 }
+
+
+.form-login {
+    background-color: white;
+    max-width: 400px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-login form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-login label {
+    font-weight: bold;
+}
+
+.form-login input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-login button {
+    background-color: #1e293b;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.form-login button:hover {
+    background-color: #38bdf8;
+}
+
+.form-login p {
+    text-align: center;
+    margin-top: 20px;
+}
+
+
+.form-cadastro {
+    background-color: white;
+    max-width: 450px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-cadastro form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-cadastro label {
+    font-weight: bold;
+}
+
+.form-cadastro input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-cadastro button {
+    background-color: #1e293b;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.form-cadastro button:hover {
+    background-color: #38bdf8;
+}
+
+.form-cadastro p {
+    text-align: center;
+    margin-top: 20px;
+}

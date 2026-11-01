@@ -16,8 +16,8 @@
             <ul>
                 <a href="{{url('/teste-blade') }}">Início</a>
                 <a href="{{ route('veiculos') }}">Veículos</a>
-                <a href="#">Login</a>
-                <a href="#">Cadastro</a>
+                <a href="{{ url('/teste-login') }}">Login</a>
+                <a href="{{ url('/teste-cadastro') }}">Cadastro</a>
             </ul>
         </nav>
     </header>

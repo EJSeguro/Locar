@@ -30,3 +30,11 @@ Route::get('/teste-detalhes', function () {
 
     return view('cliente.detalhes', compact('veiculo'));
 });
+
+route::get('/teste-login', function () {
+    return view('login.login');
+});
+
+route::get('/teste-cadastro', function () {
+    return view('cadastro.cadastro');
+});
