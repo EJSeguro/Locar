@@ -1,4 +1,3 @@
-
 @extends('layout.principal')
 
 @section('titulo', 'Cadastrar Usuário - Locar')
