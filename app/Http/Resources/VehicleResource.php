@@ -26,6 +26,7 @@ class VehicleResource extends JsonResource
             'fipe_code' => $this->fipe_code,
             'fipe_price' => $this->fipe_price,
             'daily_rate' => $this->daily_rate,
+            'available' => $this->available,
             'created_at' => $this->created_at,
         ];
     }

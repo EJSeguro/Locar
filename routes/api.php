@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FipeController;
+use App\Http\Controllers\Api\RentalController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VehicleController;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,14 @@ Route::prefix('v1')->name('api.')->group(function () {
             Route::get('fipe/years/{fipeCode}', [FipeController::class, 'years'])->where('fipeCode', '\d{6}-\d')->name('fipe.years');
 
             Route::apiResource('vehicles', VehicleController::class)->only(['index', 'store', 'show', 'destroy']);
+            Route::patch('vehicles/{vehicle}/availability', [VehicleController::class, 'availability'])->name('vehicles.availability');
+
+            Route::patch('rentals/{rental}/finish', [RentalController::class, 'finish'])->name('rentals.finish');
         });
+
+        Route::post('rentals', [RentalController::class, 'store'])->middleware('role:cliente')->name('rentals.store');
+        Route::get('rentals', [RentalController::class, 'index'])->name('rentals.index');
+        Route::get('rentals/{rental}', [RentalController::class, 'show'])->name('rentals.show');
+        Route::patch('rentals/{rental}/cancel', [RentalController::class, 'cancel'])->name('rentals.cancel');
     });
 });
