@@ -34,7 +34,7 @@
             </form>
 
 
-        <p>Já possui uma conta? <a href="{{ url('/teste-login') }}">Faça login</a></p>
+        <p>Já possui uma conta? <a href="{{ route('login') }}">Faça login</a></p>
     </div>
 
 @endsection

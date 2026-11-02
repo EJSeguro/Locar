@@ -8,14 +8,22 @@
 
     <p>Confira os veículos cadastrados no sistema.</p>
 
+    @if(session('sucesso'))
+        <p style="color: green;">
+            {{ session('sucesso') }}
+        </p>
+    @endif
+
     <div class="menu-gestor">
-        <a href="{{ url('/teste-gestor-veiculos') }}">Gerenciar Veículos</a>
-        <a href="{{ url('/teste-gestor-locacoes') }}">Gerenciar Locações</a>
+        <a href="{{ route('gestor.veiculos') }}">Gerenciar Veículos</a>
+        <a href="{{ route('gestor.locacoes') }}">Gerenciar Locações</a>
     </div>
 
     <div class="gerenciar-veiculos">
 
-        <a href="{{ url('/teste-gestor-cadastrar') }}" class="botao-cadastrar">Cadastrar Veículo</a>
+        <a href="{{ route('gestor.veiculos.cadastrar') }}" class="botao-cadastrar">
+            Cadastrar Veículo
+        </a>
 
         <table class="tabela-locacoes">
             <thead>
@@ -30,7 +38,7 @@
             </thead>
 
             <tbody>
-                @forelse($veiculos ?? [] as $veiculo)
+                @forelse($veiculos as $veiculo)
                     <tr>
                         <td>{{ $veiculo->id }}</td>
                         <td>{{ $veiculo->brand }}</td>
@@ -38,10 +46,10 @@
                         <td>{{ $veiculo->model_year }}</td>
                         <td>R$ {{ number_format($veiculo->daily_rate, 2, ',', '.') }}</td>
                         <td>
-                            <a href="{{ url('/teste-gestor-editar') }}" class="botao-cadastrar">Editar</a>
-                            
-                            <button type="button" onclick="confirm('Deseja realmente excluir este veículo?')">Excluir</button>
-
+                            <a href="{{ route('gestor.veiculos.editar', $veiculo->id) }}"
+                                class="botao-cadastrar">
+                                Ver Detalhes
+                            </a>
                         </td>
                     </tr>
                 @empty

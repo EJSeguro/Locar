@@ -1,4 +1,3 @@
-
 @extends('layout.principal')
 
 @section('titulo', 'Cadastrar Veículo - Locar')
@@ -7,40 +6,45 @@
 
     <h2>Cadastrar Veículo</h2>
 
-    <p>Preencha os dados abaixo para cadastrar um novo veículo.</p>
+    <p>Informe a placa e os códigos FIPE para cadastrar um veículo.</p>
 
     <div class="form-cadastro">
-        <form>
+
+        @if($errors->any())
+            <p style="color: red;">Verifique os dados informados.</p>
+
+            @foreach($errors->all() as $erro)
+                <p style="color: red;">{{ $erro }}</p>
+            @endforeach
+        @endif
+
+        <form action="{{ route('gestor.veiculos.salvar') }}" method="POST">
+            @csrf
+
             <label for="plate">Placa:</label>
-            <input type="text" id="plate" name="plate" required>
-
-            <label for="brand">Marca:</label>
-            <input type="text" id="brand" name="brand" required>
-
-            <label for="model">Modelo:</label>
-            <input type="text" id="model" name="model" required>
-
-            <label for="model_year">Ano:</label>
-            <input type="number" id="model_year" name="model_year" required>
-
-            <label for="fuel">Combustível:</label>
-            <input type="text" id="fuel" name="fuel" required>
-
+            <input type="text" id="plate" name="plate"
+                   value="{{ old('plate') }}"
+                   placeholder="ABC1D23" required>
 
             <label for="fipe_code">Código FIPE:</label>
-            <input type="text" id="fipe_code" name="fipe_code" required>
+            <input type="text" id="fipe_code" name="fipe_code"
+                   value="{{ old('fipe_code') }}"
+                   placeholder="004001-0" required>
 
             <label for="year_id">Código do ano FIPE:</label>
-            <input type="text" id="year_id" name="year_id" required>
+            <input type="text" id="year_id" name="year_id"
+                   value="{{ old('year_id') }}"
+                   placeholder="2024-1" required>
 
-            <label for="fipe_price">Valor FIPE:</label>
-            <input type="number" id="fipe_price" name="fipe_price" step="0.01" min="0" required>
-
-            <label for="daily_rate">Valor da diária:</label>
-            <input type="number" id="daily_rate" name="daily_rate" step="0.01" min="0" required>
-
-            <button type="button">Cadastrar Veículo</button>
+            <button type="submit">Cadastrar Veículo</button>
         </form>
+
+        <p>
+            <a href="{{ route('gestor.veiculos') }}">
+                Voltar para Veículos
+            </a>
+        </p>
+
     </div>
 
 @endsection

@@ -30,7 +30,9 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">Você ainda não possui locações.</td>
+                    <td colspan="5">
+                        Nenhuma locação disponível para exibição.
+                    </td>
                 </tr>
             @endforelse
         </tbody>

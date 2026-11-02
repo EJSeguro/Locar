@@ -13,13 +13,15 @@
         <div class="card-admin">
             <h3>Usuários</h3>
             <p>Gerencie os usuários cadastrados no sistema.</p>
-            <a href="{{ url('/teste-admin-usuarios') }}" class="botao-cadastrar">Gerenciar Usuários</a>
+            <a href="{{ route('admin.usuarios') }}" class="botao-cadastrar">
+                Gerenciar Usuários
+            </a>
         </div>
 
         <div class="card-admin">
             <h3>Veículos</h3>
             <p>Consulte os veículos cadastrados no sistema.</p>
-            <a href="{{ url('/teste-gestor-veiculos') }}" class="botao-cadastrar">
+            <a href="{{ route('gestor.veiculos') }}" class="botao-cadastrar">
                 Ver Veículos
             </a>
         </div>
@@ -27,7 +29,7 @@
         <div class="card-admin">
             <h3>Locações</h3>
             <p>Acompanhe as locações realizadas.</p>
-            <a href="{{ url('/teste-gestor-locacoes') }}" class="botao-cadastrar">
+            <a href="{{ route('gestor.locacoes') }}" class="botao-cadastrar">
                 Ver Locações
             </a>
         </div>

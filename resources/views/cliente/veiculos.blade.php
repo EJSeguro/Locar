@@ -10,7 +10,7 @@
 
     <div class="lista-veiculos">
 
-        @forelse($veiculos ?? [] as $veiculo)
+        @forelse($veiculos as $veiculo)
             <div class="veiculo">
                 <h3>{{ $veiculo->brand }} {{ $veiculo->model }}</h3>
 
@@ -20,8 +20,10 @@
 
                 <p>Diária: R$ {{ number_format($veiculo->daily_rate, 2, ',', '.') }}</p>
 
-                <a href="{{ url('/veiculos/' . $veiculo->id) }}" class="botao-detalhes">
-                    Ver Detalhes</a>
+                <a href="{{ route('veiculos.detalhes', $veiculo->id) }}"
+                   class="botao-detalhes">
+                    Ver Detalhes
+                </a>
             </div>
         @empty
             <p>Nenhum veículo encontrado.</p>

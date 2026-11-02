@@ -11,12 +11,16 @@
     <div class="form-login">
 
         @if($errors->any())
-            <p style="color: red;">
-                Verifique os dados informados.
-            </p>
+            <div style="color: red;">
+                <ul>
+                    @foreach($errors->all() as $erro)
+                        <li>{{ $erro }}</li>
+                    @endforeach
+                </ul>
+            </div>
         @endif
 
-        <form action="{{ url('/teste-admin-editar-usuario/' . $usuario->id) }}" method="POST">
+        <form action="{{ route('admin.usuarios.atualizar', $usuario->id) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -47,7 +51,7 @@
         </form>
 
         <p>
-            <a href="{{ url('/teste-admin-usuarios') }}">
+            <a href="{{ route('admin.usuarios') }}">
                 Voltar para Usuários
             </a>
         </p>

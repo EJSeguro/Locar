@@ -1,4 +1,3 @@
-
 @extends('layout.principal')
 
 @section('titulo', 'Login - Locar')
@@ -33,7 +32,7 @@
 
         <p>
             Ainda não possui uma conta?
-            <a href="{{ url('/teste-cadastro') }}">Cadastre-se</a>
+            <a href="{{ route('cadastro') }}">Cadastre-se</a>
         </p>
 
     </div>

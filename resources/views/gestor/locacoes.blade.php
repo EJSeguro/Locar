@@ -9,8 +9,8 @@
     <p>Confira as locações realizadas pelos clientes.</p>
 
     <div class="menu-gestor">
-        <a href="{{ url('/teste-gestor-veiculos') }}">Gerenciar Veículos</a>
-        <a href="{{ url('/teste-gestor-locacoes') }}">Gerenciar Locações</a>
+        <a href="{{ route('gestor.veiculos') }}">Gerenciar Veículos</a>
+        <a href="{{ route('gestor.locacoes') }}">Gerenciar Locações</a>
     </div>
 
     <table class="tabela-locacoes">

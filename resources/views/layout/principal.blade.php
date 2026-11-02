@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -13,25 +12,26 @@
         <p>Sistema de Locação de Veículos</p>
 
         <nav>
-                <a href="{{url('/teste-blade') }}">Início</a>
-                <a href="{{ route('veiculos') }}">Veículos</a>    
+            <a href="{{ route('home') }}">Início</a>
+            <a href="{{ route('veiculos') }}">Veículos</a>
+
             @guest
-                <a href="{{ url('/teste-login') }}">Login</a>
-                <a href="{{ url('/teste-cadastro') }}">Cadastro</a>
+                <a href="{{ route('login') }}">Login</a>
+                <a href="{{ route('cadastro') }}">Cadastro</a>
             @endguest
 
             @auth
-                @if(auth()->user()->role === app\enums\Role::Cliente)
-                    <a href="{{ url('/teste-locacoes') }}">Minhas Locações</a>
+                @if(auth()->user()->role === \App\Enums\Role::Cliente)
+                    <a href="{{ route('cliente.locacoes') }}">Minhas Locações</a>
                 @endif
 
-                @if(auth()->user()->role === app\enums\Role::Gestor)
-                    <a href="{{ url('/teste-gestor-veiculos') }}">Gerenciar Veículos</a>
-                    <a href="{{ url('/teste-gestor-locacoes') }}">Gerenciar Locações</a>
+                @if(auth()->user()->role === \App\Enums\Role::Gestor)
+                    <a href="{{ route('gestor.veiculos') }}">Gerenciar Veículos</a>
+                    <a href="{{ route('gestor.locacoes') }}">Gerenciar Locações</a>
                 @endif
 
-                @if(auth()->user()->role === app\enums\Role::Admin)
-                    <a href="{{ url('/teste-admin') }}">Painel Administrativo</a>
+                @if(auth()->user()->role === \App\Enums\Role::Admin)
+                    <a href="{{ route('admin.painel') }}">Painel Administrativo</a>
                 @endif
 
                 <form action="{{ route('logout') }}" method="POST">
@@ -49,6 +49,5 @@
     <footer>
         <p>Locar - Sistema de Locação de Veículos</p>
     </footer>
-
 </body>
 </html>
