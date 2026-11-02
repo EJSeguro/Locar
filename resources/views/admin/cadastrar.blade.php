@@ -47,9 +47,6 @@
                 <option value="gestor" {{ old('role') == 'gestor' ? 'selected' : '' }}>
                     Gestor
                 </option>
-                <option value="cliente" {{ old('role') == 'cliente' ? 'selected' : '' }}>
-                    Cliente
-                </option>
             </select>
 
             <button type="submit">Cadastrar Usuário</button>

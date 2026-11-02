@@ -10,6 +10,18 @@
 
     <div class="form-login">
 
+        @if(session('sucesso'))
+            <p style="color: green;">
+                {{ session('sucesso') }}
+            </p>
+        @endif
+
+        @if(session('status'))
+            <p style="color: green;">
+                {{ session('status') }}
+            </p>
+        @endif
+
         @if($errors->any())
             <p style="color: red;">
                 E-mail ou senha inválidos.
@@ -21,6 +33,7 @@
 
             <label for="email">E-mail:</label>
             <input type="email" id="email" name="email"
+                   value="{{ old('email') }}"
                    placeholder="Digite seu e-mail" required>
 
             <label for="senha">Senha:</label>

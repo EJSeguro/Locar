@@ -10,7 +10,7 @@
 
     <div class="form-cadastro">
         
-            <form action="{{ url('/cadastrar-cliente') }}" method="POST">
+            <form action="{{ route('cadastro.salvar') }}" method="POST">
                 @csrf
 
                 <label for="name">Nome completo:</label>

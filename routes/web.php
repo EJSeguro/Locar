@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-// Pagina inicial
 
 Route::get('/', function () {
     return view('home');
@@ -35,6 +34,7 @@ Route::get('/veiculos/{vehicle}', function (Vehicle $vehicle) {
         'veiculo' => $vehicle
     ]);
 })->name('veiculos.detalhes');
+
 
 Route::get('/cadastro', function () {
     return view('cadastro.cadastro');
@@ -75,187 +75,124 @@ Route::get('/redirecionar', function () {
     abort(403);
 })->middleware('auth')->name('redirecionar');
 
-// cliente
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     Route::get('/minhas-locacoes', function () {
-        if (auth()->user()->role !== Role::Cliente) {
-            abort(403);
-        }
-
         return view('cliente.locacoes');
     })->name('cliente.locacoes');
 
 });
 
-// adm
 
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'role:admin'])
+    ->group(function () {
 
-    Route::get('/', function () {
-        if (auth()->user()->role !== Role::Admin) {
-            abort(403);
-        }
+        Route::get('/', function () {
+            return view('admin.painel');
+        })->name('painel');
 
-        return view('admin.painel');
-    })->name('painel');
+        Route::get('/usuarios', function () {
+            $usuarios = User::orderBy('id')->get();
 
-    Route::get('/usuarios', function () {
-        if (auth()->user()->role !== Role::Admin) {
-            abort(403);
-        }
+            return view('admin.usuarios', compact('usuarios'));
+        })->name('usuarios');
 
-        $usuarios = User::orderBy('id')->get();
+        Route::get('/usuarios/cadastrar', function () {
+            return view('admin.cadastrar');
+        })->name('usuarios.cadastrar');
 
-        return view('admin.usuarios', compact('usuarios'));
-    })->name('usuarios');
+        Route::post('/usuarios', function (StoreUserRequest $request) {
+            User::create($request->validated());
 
-    Route::get('/usuarios/cadastrar', function () {
-        if (auth()->user()->role !== Role::Admin) {
-            abort(403);
-        }
-
-        return view('admin.cadastrar');
-    })->name('usuarios.cadastrar');
-
-    Route::post('/usuarios', function (StoreUserRequest $request) {
-        if (auth()->user()->role !== Role::Admin) {
-            abort(403);
-        }
-
-        User::create($request->validated());
-
-        return redirect()->route('admin.usuarios')
-            ->with('sucesso', 'Usuário cadastrado com sucesso!');
-    })->name('usuarios.salvar');
-
-    Route::get('/usuarios/{usuario}/editar', function (User $usuario) {
-        if (auth()->user()->role !== Role::Admin) {
-            abort(403);
-        }
-
-        return view('admin.editar', compact('usuario'));
-    })->name('usuarios.editar');
-
-    Route::put('/usuarios/{usuario}', function (Request $request, User $usuario) {
-        if (auth()->user()->role !== Role::Admin) {
-            abort(403);
-        }
-
-        $dados = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')->ignore($usuario->id)
-            ],
-            'role' => ['required', Rule::enum(Role::class)]
-        ]);
-
-        if (
-            $usuario->id === auth()->id() &&
-            $dados['role'] !== Role::Admin->value
-        ) {
-            return back()->withErrors([
-                'role' => 'Você não pode alterar seu próprio perfil de administrador.'
-            ])->withInput();
-        }
-
-        $usuario->update($dados);
-
-        return redirect()->route('admin.usuarios')
-            ->with('sucesso', 'Usuário atualizado com sucesso!');
-    })->name('usuarios.atualizar');
-
-    Route::delete('/usuarios/{usuario}', function (User $usuario) {
-        if (auth()->user()->role !== Role::Admin) {
-            abort(403);
-        }
-
-        if ($usuario->id === auth()->id()) {
             return redirect()->route('admin.usuarios')
-                ->with('erro', 'Você não pode excluir sua própria conta.');
-        }
+                ->with('sucesso', 'Usuário cadastrado com sucesso!');
+        })->name('usuarios.salvar');
 
-        $usuario->tokens()->delete();
-        $usuario->delete();
+        Route::get('/usuarios/{usuario}/editar', function (User $usuario) {
+            return view('admin.editar', compact('usuario'));
+        })->name('usuarios.editar');
 
-        return redirect()->route('admin.usuarios')
-            ->with('sucesso', 'Usuário excluído com sucesso!');
-    })->name('usuarios.excluir');
+        Route::put('/usuarios/{usuario}', function (Request $request, User $usuario) {
+            $dados = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => [
+                    'required',
+                    'string',
+                    'email',
+                    'max:255',
+                    Rule::unique('users', 'email')->ignore($usuario->id)
+                ],
+                'role' => ['required', Rule::enum(Role::class)]
+            ]);
 
-});
+            if (
+                $usuario->id === auth()->id() &&
+                $dados['role'] !== Role::Admin->value
+            ) {
+                return back()->withErrors([
+                    'role' => 'Você não pode alterar seu próprio perfil de administrador.'
+                ])->withInput();
+            }
 
-// Area do gestor e administrador
+            $usuario->update($dados);
 
-Route::prefix('gestor')->name('gestor.')->middleware('auth')->group(function () {
+            return redirect()->route('admin.usuarios')
+                ->with('sucesso', 'Usuário atualizado com sucesso!');
+        })->name('usuarios.atualizar');
 
-    Route::get('/veiculos', function () {
-        if (
-            auth()->user()->role !== Role::Gestor &&
-            auth()->user()->role !== Role::Admin
+        Route::delete('/usuarios/{usuario}', function (User $usuario) {
+            if ($usuario->id === auth()->id()) {
+                return redirect()->route('admin.usuarios')
+                    ->with('erro', 'Você não pode excluir sua própria conta.');
+            }
+
+            $usuario->tokens()->delete();
+            $usuario->delete();
+
+            return redirect()->route('admin.usuarios')
+                ->with('sucesso', 'Usuário excluído com sucesso!');
+        })->name('usuarios.excluir');
+
+    });
+
+// gestor e admin
+
+Route::prefix('gestor')
+    ->name('gestor.')
+    ->middleware(['auth', 'role:admin,gestor'])
+    ->group(function () {
+
+        Route::get('/veiculos', function () {
+            $veiculos = Vehicle::orderBy('id', 'desc')->get();
+
+            return view('gestor.veiculos', compact('veiculos'));
+        })->name('veiculos');
+
+        Route::get('/veiculos/cadastrar', function () {
+            return view('gestor.cadastrar');
+        })->name('veiculos.cadastrar');
+
+        Route::post('/veiculos', function (
+            StoreVehicleRequest $request,
+            VehicleService $vehicles
         ) {
-            abort(403);
-        }
+            $vehicles->create($request->validated());
 
-        $veiculos = Vehicle::orderBy('id', 'desc')->get();
+            return redirect()->route('gestor.veiculos')
+                ->with('sucesso', 'Veículo cadastrado com sucesso!');
+        })->name('veiculos.salvar');
 
-        return view('gestor.veiculos', compact('veiculos'));
-    })->name('veiculos');
+        Route::get('/veiculos/{vehicle}/editar', function (Vehicle $vehicle) {
+            return view('gestor.editar', [
+                'veiculo' => $vehicle
+            ]);
+        })->name('veiculos.editar');
 
-    Route::get('/veiculos/cadastrar', function () {
-        if (
-            auth()->user()->role !== Role::Gestor &&
-            auth()->user()->role !== Role::Admin
-        ) {
-            abort(403);
-        }
+        Route::get('/locacoes', function () {
+            return view('gestor.locacoes');
+        })->name('locacoes');
 
-        return view('gestor.cadastrar');
-    })->name('veiculos.cadastrar');
-
-    Route::post('/veiculos', function (
-        StoreVehicleRequest $request,
-        VehicleService $vehicles
-    ) {
-        if (
-            auth()->user()->role !== Role::Gestor &&
-            auth()->user()->role !== Role::Admin
-        ) {
-            abort(403);
-        }
-
-        $vehicles->create($request->validated());
-
-        return redirect()->route('gestor.veiculos')
-            ->with('sucesso', 'Veículo cadastrado com sucesso!');
-    })->name('veiculos.salvar');
-
-    Route::get('/veiculos/{vehicle}/editar', function (Vehicle $vehicle) {
-        if (
-            auth()->user()->role !== Role::Gestor &&
-            auth()->user()->role !== Role::Admin
-        ) {
-            abort(403);
-        }
-
-        return view('gestor.editar', [
-            'veiculo' => $vehicle
-        ]);
-    })->name('veiculos.editar');
-
-    Route::get('/locacoes', function () {
-        if (
-            auth()->user()->role !== Role::Gestor &&
-            auth()->user()->role !== Role::Admin
-        ) {
-            abort(403);
-        }
-
-        return view('gestor.locacoes');
-    })->name('locacoes');
-
-});
+    });
