@@ -4,7 +4,7 @@
 
 @section('conteudo')
 
-    <h2>Cadastro de cliente</h2>
+    <h2>Cadastro de Cliente</h2>
 
     <p>Preencha os dados abaixo para criar sua conta.</p>
 

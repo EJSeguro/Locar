@@ -18,7 +18,17 @@
 
             <p>Diária: R$ {{ number_format($veiculo->daily_rate, 2, ',', '.') }}</p>
 
-            <button type="button">Solicitar locação</button>
+        @guest
+            <button type="button" onclick="window.location.href='{{ url('/teste-login') }}'">
+                Solicitar locação
+            </button>
+        @endguest
+
+        @auth
+            <button type="button">
+                Solicitar locação
+            </button>
+        @endauth
 
         </div>
 

@@ -323,3 +323,18 @@ nav a:hover {
 .card-admin button:hover {
     background-color: #38bdf8;
 }
+
+
+.botao-detalhes {
+    display: inline-block;
+    background-color: #1e293b;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.botao-detalhes:hover {
+    background-color: #38bdf8;
+}

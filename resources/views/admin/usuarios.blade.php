@@ -7,9 +7,18 @@
     <h2>Gerenciar Usuários</h2>
 
     <p>Confira os usuários cadastrados no sistema.</p>
+    @if(session('sucesso'))
+        <p style="color: green;">
+            {{ session('sucesso') }}
+        </p>
+    @endif
 
     <a href="{{ url('/teste-admin') }}" class="botao-cadastrar">
         Voltar ao Painel
+    </a>
+
+    <a href="{{ url('/teste-admin-cadastrar-usuario') }}" class="botao-cadastrar">
+        Cadastrar Novo Usuário
     </a>
 
     <table class="tabela-locacoes">
@@ -28,7 +37,7 @@
                     <td>{{ $usuario->id }}</td>
                     <td>{{ $usuario->name }}</td>
                     <td>{{ $usuario->email }}</td>
-                    <td>{{ $usuario->role }}</td>
+                    <td>{{ $usuario->role->value }}</td>
                 </tr>
             @empty
                 <tr>

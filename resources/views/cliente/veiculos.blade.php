@@ -4,7 +4,7 @@
 
 @section('conteudo')
 
-    <h2>Veículos disponíveis</h2>
+    <h2>Veículos Disponíveis</h2>
 
     <p>Confira os veículos disponíveis para locação.</p>
 
@@ -20,7 +20,8 @@
 
                 <p>Diária: R$ {{ number_format($veiculo->daily_rate, 2, ',', '.') }}</p>
 
-                <button type="button">Ver detalhes</button>
+                <a href="{{ url('/veiculos/' . $veiculo->id) }}" class="botao-detalhes">
+                    Ver Detalhes</a>
             </div>
         @empty
             <p>Nenhum veículo encontrado.</p>
