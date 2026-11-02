@@ -30,6 +30,7 @@ class UserController extends Controller
     public function destroy(Request $request, User $user): Response
     {
         abort_if($user->is($request->user()), 422, 'Você não pode remover a si mesmo.');
+        abort_if($user->rentals()->exists(), 422, 'Usuário possui locações e não pode ser removido.');
 
         $user->tokens()->delete();
         $user->delete();

@@ -40,7 +40,7 @@ php artisan migrate
 php artisan db:seed
 ```
 
-O seeder cria o admin `admin@locar.com` com a senha `password`.
+O seeder cria os usuários `admin@locar.com`, `gestor@locar.com` e `cliente@locar.com`, todos com a senha `password`, além de 5 veículos e 3 locações do cliente. Pode rodar de novo sem duplicar nada.
 
 ### 4. Subir o servidor
 
@@ -84,22 +84,28 @@ Os demais admins e gestores são criados pela API, por um admin.
 
 Todas as rotas ficam em `/api/v1`. Exceto o login, todas exigem o header `Authorization: Bearer <token>`.
 
-| Método | Rota                        | Acesso        | Descrição                            |
-| ------ | --------------------------- | ------------- | ------------------------------------ |
-| POST   | `/login`                    | público       | Retorna o token                      |
-| POST   | `/logout`                   | autenticado   | Revoga o token atual                 |
-| GET    | `/me`                       | autenticado   | Usuário logado                       |
-| GET    | `/users`                    | admin         | Lista usuários                       |
-| POST   | `/users`                    | admin         | Cria admin ou gestor                 |
-| GET    | `/users/{id}`               | admin         | Detalha usuário                      |
-| DELETE | `/users/{id}`               | admin         | Remove usuário                       |
-| GET    | `/fipe/brands/{tipo}`       | admin, gestor | Marcas (1 carro, 2 moto, 3 caminhão) |
-| GET    | `/fipe/models/{marca}`      | admin, gestor | Modelos da marca                     |
-| GET    | `/fipe/years/{codigo_fipe}` | admin, gestor | Anos e preços do modelo              |
-| GET    | `/vehicles`                 | admin, gestor | Lista veículos                       |
-| POST   | `/vehicles`                 | admin, gestor | Cadastra veículo                     |
-| GET    | `/vehicles/{id}`            | admin, gestor | Detalha veículo                      |
-| DELETE | `/vehicles/{id}`            | admin, gestor | Remove veículo                       |
+| Método | Rota                          | Acesso              | Descrição                                              |
+| ------ | ----------------------------- | ------------------- | ------------------------------------------------------ |
+| POST   | `/login`                      | público             | Retorna o token                                        |
+| POST   | `/logout`                     | autenticado         | Revoga o token atual                                   |
+| GET    | `/me`                         | autenticado         | Usuário logado                                         |
+| GET    | `/users`                      | admin               | Lista usuários                                         |
+| POST   | `/users`                      | admin               | Cria admin ou gestor                                   |
+| GET    | `/users/{id}`                 | admin               | Detalha usuário                                        |
+| DELETE | `/users/{id}`                 | admin               | Remove usuário sem locações                            |
+| GET    | `/fipe/brands/{tipo}`         | admin, gestor       | Marcas (1 carro, 2 moto, 3 caminhão)                   |
+| GET    | `/fipe/models/{marca}`        | admin, gestor       | Modelos da marca                                       |
+| GET    | `/fipe/years/{codigo_fipe}`   | admin, gestor       | Anos e preços do modelo                                |
+| GET    | `/vehicles`                   | admin, gestor       | Lista veículos                                         |
+| POST   | `/vehicles`                   | admin, gestor       | Cadastra veículo                                       |
+| GET    | `/vehicles/{id}`              | admin, gestor       | Detalha veículo                                        |
+| DELETE | `/vehicles/{id}`              | admin, gestor       | Remove veículo sem locações                            |
+| PATCH  | `/vehicles/{id}/availability` | admin, gestor       | Habilita ou desabilita para locação (`available`)      |
+| GET    | `/rentals`                    | autenticado         | Lista locações (cliente vê só as suas)                 |
+| POST   | `/rentals`                    | cliente             | Aluga veículo (`vehicle_id`, `start_date`, `end_date`) |
+| GET    | `/rentals/{id}`               | dono, admin, gestor | Detalha locação                                        |
+| PATCH  | `/rentals/{id}/cancel`        | dono, admin, gestor | Cancela locação ativa                                  |
+| PATCH  | `/rentals/{id}/finish`        | admin, gestor       | Finaliza locação ativa                                 |
 
 ### Criar gestor
 
