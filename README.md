@@ -125,7 +125,7 @@ CALL sp_finalizar_locacao(1);
 
 ### Backup e restauração
 
-Precisa do `pg_dump`/`pg_restore` na mesma versão major do Neon (17) ou superior. Sem eles instalados, use o Docker trocando `pg_dump` por `docker run --rm -v "$PWD:/backup" -w /backup postgres:17 pg_dump`.
+Precisa do `pg_dump`/`pg_restore` na mesma versão major do Neon (18) ou superior. Sem eles instalados, use o Docker trocando `pg_dump` por `docker run --rm -v "$PWD:/backup" -w /backup postgres:18 pg_dump`.
 
 ```bash
 pg_dump "$DB_URL" --no-owner --no-acl -Fc -f locar.dump
@@ -225,7 +225,7 @@ Os testes usam SQLite em memória, então não precisam do Neon nem do `.env` pr
 Para rodar tudo contra o PostgreSQL, use um banco descartável: os testes apagam e recriam as tabelas. Nunca aponte para o banco do Neon em uso.
 
 ```bash
-docker run -d --rm --name locar-pg -e POSTGRES_PASSWORD=teste -e POSTGRES_DB=locar -p 55432:5432 postgres:17
+docker run -d --rm --name locar-pg -e POSTGRES_PASSWORD=teste -e POSTGRES_DB=locar -p 55432:5432 postgres:18
 DB_CONNECTION=pgsql DB_URL=postgresql://postgres:teste@127.0.0.1:55432/locar php artisan test
 ```
 
