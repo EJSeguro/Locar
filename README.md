@@ -1,6 +1,6 @@
 # Locar
 
-API para locação de veículos, feita em Laravel. O sistema tem três perfis: admin, gestor e cliente.
+Aplicação web e API para locação de veículos, feita em Laravel com PostgreSQL (Neon). O sistema tem três perfis: admin, gestor e cliente.
 
 O valor da diária de cada veículo é 0,15% do seu preço na tabela FIPE, consultado na [API da Invertexto](https://api.invertexto.com/api-tabela-fipe).
 
@@ -79,6 +79,87 @@ O comando pede nome, email, senha e a confirmação da senha. Em produção, a s
 
 Os demais admins e gestores são criados pela API, por um admin.
 
+## Banco de dados
+
+Os scripts SQL ficam em `database/sql` e podem ser rodados direto no PostgreSQL, sem o Laravel, nesta ordem:
+
+| Script             | Conteúdo                                                        |
+| ------------------ | --------------------------------------------------------------- |
+| `01_estrutura.sql` | Tabelas `users`, `vehicles` e `rentals` com chaves e índices    |
+| `02_objetos.sql`   | Functions, stored procedures e triggers                         |
+| `03_dados.sql`     | Mesmos usuários, veículos e locações do seeder (senha `password`) |
+
+```bash
+psql "$DB_URL" -v ON_ERROR_STOP=1 -f database/sql/01_estrutura.sql -f database/sql/02_objetos.sql -f database/sql/03_dados.sql
+```
+
+Pelo Laravel, `php artisan migrate` cria as tabelas e a migration `create_database_objects` aplica o `02_objetos.sql`. Ela só roda no PostgreSQL; no SQLite dos testes é ignorada.
+
+### Índices
+
+| Índice                                         | Uso                                                              |
+| ---------------------------------------------- | ---------------------------------------------------------------- |
+| `rentals (vehicle_id, start_date, end_date)`   | Busca de conflito de datas ao reservar um veículo                |
+| `rentals (status)`                             | Filtro de locações ativas                                        |
+| `vehicles (available)`                         | Listagem pública mostra só veículos disponíveis                  |
+| `users (role)`                                 | Filtro de usuários por perfil                                    |
+
+### Functions, procedures e triggers
+
+| Objeto                          | Tipo      | Regra de negócio                                                                 | Onde a aplicação usa                                      |
+| ------------------------------- | --------- | -------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `fn_calcular_total_locacao`     | function  | Total = diária × dias                                                            | `RentalService::total()` e trigger `trg_rentals_calcular_total` |
+| `fn_veiculo_disponivel`         | function  | Veículo habilitado e sem locação ativa no período                                | Trigger `trg_rentals_bloquear_conflito`                   |
+| `sp_finalizar_locacao`          | procedure | Finaliza locação ativa, erro se não estiver ativa                                | `RentalService::changeStatus()` (gestor finaliza)         |
+| `sp_cancelar_locacao`           | procedure | Cancela locação ativa, erro se não estiver ativa                                 | `RentalService::changeStatus()` (cliente/gestor cancela)  |
+| `trg_rentals_calcular_total`    | trigger   | `BEFORE INSERT OR UPDATE` recalcula o `total` com a function                     | Toda locação criada pela web, API ou seeder               |
+| `trg_rentals_bloquear_conflito` | trigger   | `BEFORE INSERT` impede locação ativa com veículo desabilitado ou já reservado    | Toda locação criada pela web, API ou seeder               |
+
+Para demonstrar direto no banco:
+
+```sql
+SELECT fn_calcular_total_locacao(106.03, '2026-11-10', '2026-11-13');
+SELECT fn_veiculo_disponivel(1, current_date, current_date + 3);
+CALL sp_finalizar_locacao(1);
+```
+
+### Backup e restauração
+
+Precisa do `pg_dump`/`pg_restore` na mesma versão major do Neon (17) ou superior. Sem eles instalados, use o Docker trocando `pg_dump` por `docker run --rm -v "$PWD:/backup" -w /backup postgres:17 pg_dump`.
+
+```bash
+pg_dump "$DB_URL" --no-owner --no-acl -Fc -f locar.dump
+pg_dump "$DB_URL" --no-owner --no-acl -f locar.sql
+```
+
+O `.dump` é o formato do `pg_restore`; o `.sql` é texto puro, legível e entregável como script. Para restaurar, crie uma branch vazia no Neon (ou outro banco) e rode:
+
+```bash
+pg_restore --no-owner --no-acl --clean --if-exists -d "$DB_URL_RESTAURO" locar.dump
+psql "$DB_URL_RESTAURO" -c "SELECT count(*) FROM rentals;"
+```
+
+Não commite os backups: eles contêm os hashes de senha dos usuários.
+
+## Rotas web
+
+| Método | Rota                                   | Acesso        | Descrição                                     |
+| ------ | -------------------------------------- | ------------- | --------------------------------------------- |
+| GET    | `/`                                    | público       | Página inicial                                |
+| GET    | `/veiculos`                            | público       | Veículos disponíveis                          |
+| GET    | `/veiculos/{id}`                       | público       | Detalhes do veículo e formulário de locação   |
+| GET    | `/cadastro`                            | visitante     | Cadastro de cliente                           |
+| GET    | `/login`                               | visitante     | Login                                         |
+| GET    | `/minhas-locacoes`                     | cliente       | Locações do cliente                           |
+| POST   | `/locacoes`                            | cliente       | Cria locação                                  |
+| PATCH  | `/minhas-locacoes/{id}/cancelar`       | cliente       | Cancela locação antes da retirada             |
+| GET    | `/admin/usuarios`                      | admin         | Lista, cadastra, edita e exclui usuários      |
+| GET    | `/gestor/veiculos`                     | admin, gestor | Lista veículos                                |
+| GET    | `/gestor/veiculos/cadastrar`           | admin, gestor | Cadastra veículo pela FIPE                    |
+| GET    | `/gestor/veiculos/{id}/editar`         | admin, gestor | Edita placa e diária, exclui veículo          |
+| PATCH  | `/gestor/veiculos/{id}/disponibilidade`| admin, gestor | Habilita ou desabilita veículo                |
+| GET    | `/gestor/locacoes`                     | admin, gestor | Lista e finaliza locações                     |
+
 ## API
 
 Todas as rotas ficam em `/api/v1`. Exceto o login, todas exigem o header `Authorization: Bearer <token>`.
@@ -98,6 +179,7 @@ Todas as rotas ficam em `/api/v1`. Exceto o login, todas exigem o header `Author
 | GET    | `/vehicles`                   | admin, gestor       | Lista veículos                                         |
 | POST   | `/vehicles`                   | admin, gestor       | Cadastra veículo                                       |
 | GET    | `/vehicles/{id}`              | admin, gestor       | Detalha veículo                                        |
+| PUT    | `/vehicles/{id}`              | admin, gestor       | Atualiza `plate`, `daily_rate` e `available`           |
 | DELETE | `/vehicles/{id}`              | admin, gestor       | Remove veículo sem locações                            |
 | PATCH  | `/vehicles/{id}/availability` | admin, gestor       | Habilita ou desabilita para locação (`available`)      |
 | GET    | `/rentals`                    | autenticado         | Lista locações (cliente vê só as suas)                 |
@@ -138,7 +220,16 @@ POST /api/v1/vehicles
 php artisan test
 ```
 
-Os testes usam SQLite em memória, então não precisam do Neon nem do `.env` preenchido.
+Os testes usam SQLite em memória, então não precisam do Neon nem do `.env` preenchido. Nesse modo os testes de `tests/Feature/DatabaseObjectsTest.php` são pulados, porque functions, procedures e triggers só existem no PostgreSQL.
+
+Para rodar tudo contra o PostgreSQL, use um banco descartável: os testes apagam e recriam as tabelas. Nunca aponte para o banco do Neon em uso.
+
+```bash
+docker run -d --rm --name locar-pg -e POSTGRES_PASSWORD=teste -e POSTGRES_DB=locar -p 55432:5432 postgres:17
+DB_CONNECTION=pgsql DB_URL=postgresql://postgres:teste@127.0.0.1:55432/locar php artisan test
+```
+
+No PowerShell, defina as variáveis antes: `$env:DB_CONNECTION='pgsql'; $env:DB_URL='postgresql://postgres:teste@127.0.0.1:55432/locar'`.
 
 Para rodar a mesma checagem do CI (lint, tipos e testes):
 
