@@ -42,6 +42,8 @@ Route::prefix('gestor')->name('gestor.')->middleware(['auth', 'role:admin,gestor
     Route::get('veiculos/cadastrar', [VehicleController::class, 'create'])->name('veiculos.cadastrar');
     Route::post('veiculos', [VehicleController::class, 'store'])->name('veiculos.salvar');
     Route::get('veiculos/{vehicle}/editar', [VehicleController::class, 'details'])->name('veiculos.editar');
+    Route::put('veiculos/{vehicle}', [VehicleController::class, 'update'])->name('veiculos.atualizar');
+    Route::delete('veiculos/{vehicle}', [VehicleController::class, 'destroy'])->name('veiculos.excluir');
     Route::patch('veiculos/{vehicle}/disponibilidade', [VehicleController::class, 'availability'])->name('veiculos.disponibilidade');
     Route::get('locacoes', [RentalController::class, 'index'])->name('locacoes');
     Route::patch('locacoes/{locacao}/finalizar', [RentalController::class, 'finish'])->name('locacoes.finalizar');

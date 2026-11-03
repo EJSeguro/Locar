@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreVehicleRequest;
 use App\Http\Requests\Api\UpdateVehicleAvailabilityRequest;
+use App\Http\Requests\Api\UpdateVehicleRequest;
 use App\Models\Vehicle;
 use App\Services\VehicleService;
 use Illuminate\Contracts\View\View;
@@ -44,6 +45,20 @@ class VehicleController extends Controller
     public function details(Vehicle $vehicle): View
     {
         return view('gestor.editar', ['veiculo' => $vehicle]);
+    }
+
+    public function update(UpdateVehicleRequest $request, Vehicle $vehicle): RedirectResponse
+    {
+        $vehicle->update($request->validated());
+
+        return to_route('gestor.veiculos')->with('sucesso', 'Veículo atualizado com sucesso!');
+    }
+
+    public function destroy(Vehicle $vehicle, VehicleService $vehicles): RedirectResponse
+    {
+        $vehicles->delete($vehicle);
+
+        return to_route('gestor.veiculos')->with('sucesso', 'Veículo excluído com sucesso!');
     }
 
     public function availability(UpdateVehicleAvailabilityRequest $request, Vehicle $vehicle): RedirectResponse

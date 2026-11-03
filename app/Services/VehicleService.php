@@ -32,6 +32,15 @@ class VehicleService
         ]);
     }
 
+    public function delete(Vehicle $vehicle): void
+    {
+        if ($vehicle->rentals()->exists()) {
+            throw ValidationException::withMessages(['vehicle' => 'Veículo possui locações. Desabilite-o em vez de excluir.']);
+        }
+
+        $vehicle->delete();
+    }
+
     public function dailyRate(float $fipePrice): float
     {
         return round($fipePrice * 0.0015, 2);

@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Role;
+use App\Models\Rental;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Support\Facades\Http;
@@ -61,6 +62,26 @@ test('admin removes a vehicle', function () {
     $this->deleteJson("/api/v1/vehicles/{$vehicle->id}")->assertNoContent();
 
     expect(Vehicle::find($vehicle->id))->toBeNull();
+});
+
+test('gestor updates plate and daily rate of a vehicle', function () {
+    Sanctum::actingAs(User::factory()->role(Role::Gestor)->create());
+    $vehicle = Vehicle::factory()->create();
+
+    $this->putJson("/api/v1/vehicles/{$vehicle->id}", ['plate' => 'xyz-9a87', 'daily_rate' => 150.5])
+        ->assertOk()
+        ->assertJsonPath('data.id', $vehicle->id)
+        ->assertJsonPath('data.plate', 'XYZ9A87')
+        ->assertJsonPath('data.daily_rate', '150.50');
+});
+
+test('vehicle with rentals cannot be removed', function () {
+    Sanctum::actingAs(User::factory()->role(Role::Admin)->create());
+    $rental = Rental::factory()->create();
+
+    $this->deleteJson("/api/v1/vehicles/{$rental->vehicle_id}")
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('vehicle');
 });
 
 test('cliente cannot manage vehicles', function () {

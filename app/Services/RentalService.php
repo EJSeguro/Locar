@@ -62,6 +62,10 @@ class RentalService
 
     public function total(float $dailyRate, CarbonInterface $start, CarbonInterface $end): float
     {
+        if (DB::getDriverName() === 'pgsql') {
+            return (float) DB::scalar('select fn_calcular_total_locacao(?, ?, ?)', [$dailyRate, $start->toDateString(), $end->toDateString()]);
+        }
+
         return round($dailyRate * $start->diffInDays($end), 2);
     }
 
@@ -75,8 +79,20 @@ class RentalService
             throw ValidationException::withMessages(['status' => 'Só é possível cancelar antes da data de retirada.']);
         }
 
-        $rental->update(['status' => $status]);
+        if (DB::getDriverName() !== 'pgsql') {
+            $rental->update(['status' => $status]);
 
-        return $rental;
+            return $rental;
+        }
+
+        $procedure = match ($status) {
+            RentalStatus::Finalizada => 'sp_finalizar_locacao',
+            RentalStatus::Cancelada => 'sp_cancelar_locacao',
+            RentalStatus::Ativa => throw ValidationException::withMessages(['status' => 'Status inválido.']),
+        };
+
+        DB::statement("call {$procedure}(?)", [$rental->id]);
+
+        return $rental->refresh();
     }
 }
