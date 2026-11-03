@@ -33,17 +33,23 @@
                    value="{{ old('email', $usuario->email) }}" required>
 
             <label for="role">Nível de Acesso:</label>
-            <select id="role" name="role" required>
-                <option value="">Selecione um perfil</option>
-                
-                <option value="admin" @selected(old('role', $usuario->role->value) === 'admin')>
-                    Administrador
-                </option>
+            
+            @if($usuario->role === \App\Enums\Role::Cliente)
+                <input type="hidden" name="role" value="cliente">
+                <p>Cliente</p>
+            @else
+                <select id="role" name="role" required>
+                    <option value="">Selecione um perfil</option>
 
-                <option value="gestor" @selected(old('role', $usuario->role->value) === 'gestor')>
-                    Gestor
-                </option>
-            </select>
+                    <option value="admin" @selected(old('role', $usuario->role->value) === 'admin')>
+                        Administrador
+                    </option>
+
+                    <option value="gestor" @selected(old('role', $usuario->role->value) === 'gestor')>
+                        Gestor
+                    </option>
+                </select>
+            @endif
 
             <button type="submit">Salvar Alterações</button>
         </form>

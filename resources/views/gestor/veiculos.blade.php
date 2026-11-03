@@ -52,6 +52,7 @@
                             @else
                                 Indisponível
                             @endif
+                        </td>
                         <td>
                             <a href="{{ route('gestor.veiculos.editar', $veiculo->id) }}"
                                 class="botao-cadastrar">

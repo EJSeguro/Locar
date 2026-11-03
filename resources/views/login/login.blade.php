@@ -24,7 +24,7 @@
 
         @if($errors->has('email'))
             <p style="color: red;">
-                @if($errors->first('email') === 'These credentials do not match our records.')
+                @if($errors->first('email') === __('auth.failed'))
                     E-mail ou senha inválidos.
                 @else
                     {{ $errors->first('email') }}

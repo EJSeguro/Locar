@@ -169,7 +169,14 @@ Route::prefix('admin')
                     'max:255',
                     Rule::unique('users', 'email')->ignore($usuario->id)
                 ],
-                'role' => ['required', Rule::in(['admin', 'gestor'])]
+                'role' => [
+                    'required',
+                    Rule::in(
+                        $usuario->role === Role::Cliente
+                            ? ['cliente']
+                            : ['admin', 'gestor']
+                    )
+                ]
             ]);
 
             if (
