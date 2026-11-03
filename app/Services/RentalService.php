@@ -29,6 +29,15 @@ class RentalService
                 throw ValidationException::withMessages(['vehicle_id' => 'Veículo indisponível para locação.']);
             }
 
+            $isOverdue = Rental::where('vehicle_id', $vehicle->id)
+                ->where('status', RentalStatus::Ativa)
+                ->whereDate('end_date', '<', today())
+                ->exists();
+
+            if ($isOverdue) {
+                throw ValidationException::withMessages(['vehicle_id' => 'Veículo aguardando devolução de uma locação anterior.']);
+            }
+
             $isBooked = Rental::where('vehicle_id', $vehicle->id)
                 ->where('status', RentalStatus::Ativa)
                 ->whereDate('start_date', '<', $end)
