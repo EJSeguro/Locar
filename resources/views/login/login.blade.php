@@ -22,9 +22,13 @@
             </p>
         @endif
 
-        @if($errors->any())
+        @if($errors->has('email'))
             <p style="color: red;">
-                E-mail ou senha inválidos.
+                @if($errors->first('email') === 'These credentials do not match our records.')
+                    E-mail ou senha inválidos.
+                @else
+                    {{ $errors->first('email') }}
+                @endif
             </p>
         @endif
 

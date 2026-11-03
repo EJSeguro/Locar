@@ -33,6 +33,7 @@
                     <th>Modelo</th>
                     <th>Ano</th>
                     <th>Diária</th>
+                    <th>Disponibilidade</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -46,15 +47,35 @@
                         <td>{{ $veiculo->model_year }}</td>
                         <td>R$ {{ number_format($veiculo->daily_rate, 2, ',', '.') }}</td>
                         <td>
+                            @if($veiculo->available)
+                                Disponível
+                            @else
+                                Indisponível
+                            @endif
+                        <td>
                             <a href="{{ route('gestor.veiculos.editar', $veiculo->id) }}"
                                 class="botao-cadastrar">
                                 Ver Detalhes
                             </a>
+
+                            <form action="{{ route('gestor.veiculos.disponibilidade', $veiculo->id) }}"
+                                  method="POST"
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Deseja alterar a disponibilidade deste veículo?')">
+
+                                @csrf
+                                @method('PATCH')
+
+                                <button type="submit" 
+                                        class="{{ $veiculo->available ? 'botao-excluir' : 'botao-cadastrar' }}">
+                                    {{ $veiculo->available ? 'Desabilitar' : 'Habilitar' }}
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6">Nenhum veículo cadastrado.</td>
+                        <td colspan="7">Nenhum veículo cadastrado.</td>
                     </tr>
                 @endforelse
             </tbody>

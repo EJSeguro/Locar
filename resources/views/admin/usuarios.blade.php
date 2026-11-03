@@ -35,6 +35,7 @@
                 <th>Nome</th>
                 <th>E-mail</th>
                 <th>Nível de Acesso</th>
+                <th>Locações</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -46,6 +47,7 @@
                     <td>{{ $usuario->name }}</td>
                     <td>{{ $usuario->email }}</td>
                     <td>{{ $usuario->role->value }}</td>
+                    <td>{{ $usuario->rentals_count }}</td>
 
                     <td>
                         <a href="{{ route('admin.usuarios.editar', $usuario->id) }}"
@@ -53,7 +55,7 @@
                             Editar
                         </a>
 
-                        @if($usuario->id !== auth()->id())
+                        @if($usuario->id !== auth()->id() && $usuario->rentals_count == 0)
                             <form action="{{ route('admin.usuarios.excluir', $usuario->id) }}"
                                   method="POST"
                                   onsubmit="return confirm('Tem certeza que deseja excluir este usuário?')">
@@ -65,14 +67,16 @@
                                     Excluir
                                 </button>
                             </form>
-                        @else
+                        @elseif($usuario->id === auth()->id())
                             <span>Usuário atual</span>
+                        @else
+                            <span>Não pode excluir (possui locações)</span>
                         @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">Nenhum usuário encontrado.</td>
+                    <td colspan="6">Nenhum usuário encontrado.</td>
                 </tr>
             @endforelse
         </tbody>

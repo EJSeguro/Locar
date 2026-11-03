@@ -9,7 +9,11 @@
     <p>Acompanhe aqui suas locações de veículos.</p>
 
     @if(session('sucesso'))
-        <p>{{ session('sucesso') }}</p>
+        <p style="color: green;">{{ session('sucesso') }}</p>
+    @endif
+
+    @if($errors->has('status'))
+        <p style="color: red;">{{ $errors->first('status') }}</p>
     @endif
 
     <table class="tabela-locacoes">
@@ -20,6 +24,7 @@
                 <th>Devolução</th>
                 <th>Valor</th>
                 <th>Situação</th>
+                <th>Ações</th>
             </tr>
         </thead>
 
@@ -46,10 +51,31 @@
                     <td>
                         {{ ucfirst($locacao->status->value) }}
                     </td>
+
+                    <td>
+                        @if(
+                            $locacao->status === \App\Enums\RentalStatus::Ativa &&
+                            $locacao->start_date->gt(today())
+                        )
+                            <form action="{{ route('cliente.locacoes.cancelar', $locacao->id) }}"
+                                  method="POST"
+                                  onsubmit="return confirm('Deseja realmente cancelar esta locação?')">
+
+                                @csrf
+                                @method('PATCH')
+
+                                <button type="submit" class="botao-excluir">
+                                    Cancelar
+                                </button>
+                            </form>
+                        @else
+                            -
+                        @endif
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">
+                    <td colspan="6">
                         Você ainda não possui nenhuma locação.
                     </td>
                 </tr>

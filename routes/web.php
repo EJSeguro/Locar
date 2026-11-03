@@ -12,6 +12,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use App\Http\Requests\Api\StoreRentalRequest;
 use App\Services\RentalService;
+use App\Models\Rental;
+use App\Enums\RentalStatus;
 
 Route::get('/', function () {
     return view('home');
@@ -25,12 +27,17 @@ require __DIR__.'/settings.php';
 
 
 Route::get('/veiculos', function () {
-    $veiculos = Vehicle::orderBy('id', 'desc')->get();
+    $veiculos = Vehicle::where('available', true)
+    ->orderBy('id', 'desc')
+    ->get();
 
     return view('cliente.veiculos', compact('veiculos'));
 })->name('veiculos');
 
 Route::get('/veiculos/{vehicle}', function (Vehicle $vehicle) {
+    if (!$vehicle->available) {
+        abort(404);
+    }
     return view('cliente.detalhes', [
         'veiculo' => $vehicle
     ]);
@@ -99,6 +106,23 @@ Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     })->name('cliente.locacoes.salvar');
 
+    Route::patch('minhas-locacoes/{locacao}/cancelar', function (
+        Rental $locacao,
+        RentalService $rentals
+        ) {
+            abort_unless($locacao->user_id === auth()->id(), 403);
+
+            $rentals->changeStatus(
+                $locacao,
+                RentalStatus::Cancelada,
+                auth()->user()
+            );
+
+            return redirect()->route('cliente.locacoes')
+            ->with('sucesso', 'Locação cancelada com sucesso!');
+
+    })->name('cliente.locacoes.cancelar');
+
 });
 
 
@@ -112,9 +136,12 @@ Route::prefix('admin')
         })->name('painel');
 
         Route::get('/usuarios', function () {
-            $usuarios = User::orderBy('id')->get();
+            $usuarios = User::withCount('rentals')
+            ->orderBy('id')
+            ->get();
 
             return view('admin.usuarios', compact('usuarios'));
+            
         })->name('usuarios');
 
         Route::get('/usuarios/cadastrar', function () {
@@ -142,7 +169,7 @@ Route::prefix('admin')
                     'max:255',
                     Rule::unique('users', 'email')->ignore($usuario->id)
                 ],
-                'role' => ['required', Rule::enum(Role::class)]
+                'role' => ['required', Rule::in(['admin', 'gestor'])]
             ]);
 
             if (
@@ -164,6 +191,10 @@ Route::prefix('admin')
             if ($usuario->id === auth()->id()) {
                 return redirect()->route('admin.usuarios')
                     ->with('erro', 'Você não pode excluir sua própria conta.');
+            }
+            if ($usuario->rentals()->exists()) {
+                return redirect()->route('admin.usuarios')
+                    ->with('erro', 'Não é possível excluir um usuário que possui locações.');
             }
 
             $usuario->tokens()->delete();
@@ -208,8 +239,36 @@ Route::prefix('gestor')
             ]);
         })->name('veiculos.editar');
 
+        Route::patch('/veiculos/{vehicle}/disponibilidade', function (Vehicle $vehicle,) {
+
+            $vehicle->available = !$vehicle->available;
+
+            $vehicle->save();
+
+            return redirect()->route('gestor.veiculos')
+                ->with('sucesso', 'Disponibilidade do veículo atualizada com sucesso!');
+
+        })->name('veiculos.disponibilidade');
+
         Route::get('/locacoes', function () {
-            return view('gestor.locacoes');
+            $locacoes = Rental::with('user', 'vehicle')
+            ->latest()
+            ->get();
+            return view('gestor.locacoes', compact('locacoes'));
         })->name('locacoes');
 
+        Route::patch('/locacoes/{locacao}/finalizar', function (
+            Rental $locacao,
+            RentalService $rentals
+        ) {
+            $rentals->changeStatus(
+                $locacao,
+                RentalStatus::Finalizada,
+                auth()->user()
+            );
+
+            return redirect()->route('gestor.locacoes')
+                ->with('sucesso', 'Locação finalizada com sucesso!');
+
+        })->name('locacoes.finalizar');
     });

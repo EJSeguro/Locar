@@ -34,16 +34,14 @@
 
             <label for="role">Nível de Acesso:</label>
             <select id="role" name="role" required>
+                <option value="">Selecione um perfil</option>
+                
                 <option value="admin" @selected(old('role', $usuario->role->value) === 'admin')>
                     Administrador
                 </option>
 
                 <option value="gestor" @selected(old('role', $usuario->role->value) === 'gestor')>
                     Gestor
-                </option>
-
-                <option value="cliente" @selected(old('role', $usuario->role->value) === 'cliente')>
-                    Cliente
                 </option>
             </select>
 
