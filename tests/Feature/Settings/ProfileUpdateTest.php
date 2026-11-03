@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\Role;
+use App\Models\Rental;
 use App\Models\User;
 
 test('profile page is displayed', function () {
@@ -78,8 +80,36 @@ test('correct password must be provided to delete account', function () {
         ]);
 
     $response
-        ->assertSessionHasErrors('password')
+        ->assertSessionHasErrorsIn('excluir', 'password')
         ->assertRedirect(route('profile.edit'));
 
     expect($user->fresh())->not->toBeNull();
+});
+
+test('user with rentals cannot delete their account', function () {
+    $rental = Rental::factory()->create();
+
+    $response = $this
+        ->actingAs($rental->user)
+        ->from(route('profile.edit'))
+        ->delete(route('profile.destroy'), [
+            'password' => 'password',
+        ]);
+
+    $response
+        ->assertSessionHasErrors('user')
+        ->assertRedirect(route('profile.edit'));
+
+    $this->assertAuthenticatedAs($rental->user);
+    expect($rental->user->fresh())->not->toBeNull();
+});
+
+test('admin cannot delete their own account', function () {
+    $admin = User::factory()->role(Role::Admin)->create();
+
+    $this->actingAs($admin)
+        ->delete(route('profile.destroy'), ['password' => 'password'])
+        ->assertSessionHasErrors('user');
+
+    expect($admin->fresh())->not->toBeNull();
 });

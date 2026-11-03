@@ -11,6 +11,11 @@ class ProfileDeleteRequest extends FormRequest
     use PasswordValidationRules;
 
     /**
+     * @var string
+     */
+    protected $errorBag = 'excluir';
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, ValidationRule|array<mixed>|string>

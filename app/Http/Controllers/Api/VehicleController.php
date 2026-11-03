@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreVehicleRequest;
+use App\Http\Requests\Api\UpdateVehicleAvailabilityRequest;
 use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
 use App\Services\VehicleService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
@@ -37,9 +37,9 @@ class VehicleController extends Controller
         return response()->noContent();
     }
 
-    public function availability(Request $request, Vehicle $vehicle): VehicleResource
+    public function availability(UpdateVehicleAvailabilityRequest $request, Vehicle $vehicle): VehicleResource
     {
-        $vehicle->update($request->validate(['available' => ['required', 'boolean']]));
+        $vehicle->update($request->validated());
 
         return new VehicleResource($vehicle);
     }

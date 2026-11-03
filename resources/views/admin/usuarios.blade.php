@@ -14,11 +14,11 @@
         </p>
     @endif
 
-    @if(session('erro'))
+    @error('user')
         <p style="color: red;">
-            {{ session('erro') }}
+            {{ $message }}
         </p>
-    @endif
+    @enderror
 
     <a href="{{ route('admin.painel') }}" class="botao-cadastrar">
         Voltar ao Painel
