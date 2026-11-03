@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\RentalStatus;
+use App\Enums\Role;
 use App\Models\Rental;
 use App\Models\User;
 use App\Models\Vehicle;
@@ -55,10 +56,14 @@ class RentalService
         return round($dailyRate * $start->diffInDays($end), 2);
     }
 
-    public function changeStatus(Rental $rental, RentalStatus $status): Rental
+    public function changeStatus(Rental $rental, RentalStatus $status, ?User $by = null): Rental
     {
         if ($rental->status !== RentalStatus::Ativa) {
             throw ValidationException::withMessages(['status' => 'Só locações ativas podem ser alteradas.']);
+        }
+
+        if ($status === RentalStatus::Cancelada && $by?->role === Role::Cliente && $rental->start_date->lte(today())) {
+            throw ValidationException::withMessages(['status' => 'Só é possível cancelar antes da data de retirada.']);
         }
 
         $rental->update(['status' => $status]);
