@@ -57,6 +57,41 @@ test('vehicle can be rented from the day a previous rental ends or after a cance
     ])->assertCreated();
 });
 
+test('vehicle with an overdue active rental cannot be rented until it is finished', function () {
+    Sanctum::actingAs(User::factory()->create());
+    $vehicle = Vehicle::factory()->create();
+    $overdue = Rental::factory()->for($vehicle)->create([
+        'start_date' => today()->subDays(5),
+        'end_date' => today()->subDay(),
+    ]);
+    $payload = [
+        'vehicle_id' => $vehicle->id,
+        'start_date' => today()->addDays(10)->toDateString(),
+        'end_date' => today()->addDays(12)->toDateString(),
+    ];
+
+    $this->postJson('/api/v1/rentals', $payload)->assertJsonValidationErrors('vehicle_id');
+
+    $overdue->update(['status' => RentalStatus::Finalizada]);
+
+    $this->postJson('/api/v1/rentals', $payload)->assertCreated();
+});
+
+test('vehicle can be rented from the end date of a rental that ends today', function () {
+    Sanctum::actingAs(User::factory()->create());
+    $vehicle = Vehicle::factory()->create();
+    Rental::factory()->for($vehicle)->create([
+        'start_date' => today()->subDays(2),
+        'end_date' => today(),
+    ]);
+
+    $this->postJson('/api/v1/rentals', [
+        'vehicle_id' => $vehicle->id,
+        'start_date' => today()->toDateString(),
+        'end_date' => today()->addDays(2)->toDateString(),
+    ])->assertCreated();
+});
+
 test('disabled vehicle cannot be rented', function () {
     Sanctum::actingAs(User::factory()->create());
     $vehicle = Vehicle::factory()->create(['available' => false]);

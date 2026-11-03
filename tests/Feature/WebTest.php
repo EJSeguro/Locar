@@ -18,8 +18,8 @@ test('visitor registers as cliente', function () {
 });
 
 test('public list hides disabled vehicles', function () {
-    $available = Vehicle::factory()->create();
-    $disabled = Vehicle::factory()->create(['available' => false]);
+    $available = Vehicle::factory()->create(['model' => 'ModeloDisponivel']);
+    $disabled = Vehicle::factory()->create(['model' => 'ModeloDesabilitado', 'available' => false]);
 
     $this->get(route('veiculos'))->assertSee($available->model)->assertDontSee($disabled->model);
     $this->get(route('veiculos.detalhes', $disabled))->assertNotFound();
