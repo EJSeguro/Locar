@@ -84,3 +84,25 @@ test('gestor lists and finishes rentals', function () {
 
     expect($rental->fresh()->status)->toBe(RentalStatus::Finalizada);
 });
+
+test('gestor edits a vehicle', function () {
+    $vehicle = Vehicle::factory()->create();
+
+    $this->actingAs(User::factory()->role(Role::Gestor)->create())
+        ->put(route('gestor.veiculos.atualizar', $vehicle), ['plate' => 'XYZ9A87', 'daily_rate' => 99.9])
+        ->assertRedirect(route('gestor.veiculos'));
+
+    expect($vehicle->fresh())->plate->toBe('XYZ9A87')->daily_rate->toBe('99.90');
+});
+
+test('gestor deletes only vehicles without rentals', function () {
+    $vehicle = Vehicle::factory()->create();
+    $rented = Rental::factory()->create()->vehicle;
+    $this->actingAs(User::factory()->role(Role::Gestor)->create());
+
+    $this->delete(route('gestor.veiculos.excluir', $vehicle))->assertRedirect(route('gestor.veiculos'));
+    $this->delete(route('gestor.veiculos.excluir', $rented))->assertSessionHasErrors('vehicle');
+
+    expect(Vehicle::find($vehicle->id))->toBeNull()
+        ->and($rented->fresh())->not->toBeNull();
+});

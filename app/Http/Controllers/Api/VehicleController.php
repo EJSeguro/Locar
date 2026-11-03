@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreVehicleRequest;
 use App\Http\Requests\Api\UpdateVehicleAvailabilityRequest;
+use App\Http\Requests\Api\UpdateVehicleRequest;
 use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
 use App\Services\VehicleService;
@@ -28,11 +29,16 @@ class VehicleController extends Controller
         return new VehicleResource($vehicle);
     }
 
-    public function destroy(Vehicle $vehicle): Response
+    public function update(UpdateVehicleRequest $request, Vehicle $vehicle): VehicleResource
     {
-        abort_if($vehicle->rentals()->exists(), 422, 'Veículo possui locações. Desabilite-o em vez de excluir.');
+        $vehicle->update($request->validated());
 
-        $vehicle->delete();
+        return new VehicleResource($vehicle);
+    }
+
+    public function destroy(Vehicle $vehicle, VehicleService $vehicles): Response
+    {
+        $vehicles->delete($vehicle);
 
         return response()->noContent();
     }

@@ -14,6 +14,10 @@
         </p>
     @endif
 
+    @foreach($errors->all() as $erro)
+        <p style="color: red;">{{ $erro }}</p>
+    @endforeach
+
     <div class="menu-gestor">
         <a href="{{ route('gestor.veiculos') }}">Gerenciar Veículos</a>
         <a href="{{ route('gestor.locacoes') }}">Gerenciar Locações</a>
@@ -56,7 +60,7 @@
                         <td>
                             <a href="{{ route('gestor.veiculos.editar', $veiculo->id) }}"
                                 class="botao-cadastrar">
-                                Ver Detalhes
+                                Editar
                             </a>
 
                             <form action="{{ route('gestor.veiculos.disponibilidade', $veiculo->id) }}"

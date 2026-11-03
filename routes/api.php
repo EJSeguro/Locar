@@ -23,7 +23,7 @@ Route::prefix('v1')->name('api.')->group(function () {
             Route::get('fipe/models/{brand}', [FipeController::class, 'models'])->whereNumber('brand')->name('fipe.models');
             Route::get('fipe/years/{fipeCode}', [FipeController::class, 'years'])->where('fipeCode', '\d{6}-\d')->name('fipe.years');
 
-            Route::apiResource('vehicles', VehicleController::class)->only(['index', 'store', 'show', 'destroy']);
+            Route::apiResource('vehicles', VehicleController::class);
             Route::patch('vehicles/{vehicle}/availability', [VehicleController::class, 'availability'])->name('vehicles.availability');
 
             Route::patch('rentals/{rental}/finish', [RentalController::class, 'finish'])->name('rentals.finish');
