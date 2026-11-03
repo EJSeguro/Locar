@@ -48,6 +48,10 @@
         </form>
 
         <p>
+            <a href="{{ route('password.request') }}">Esqueci minha senha</a>
+        </p>
+
+        <p>
             Ainda não possui uma conta?
             <a href="{{ route('cadastro') }}">Cadastre-se</a>
         </p>

@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\RentalService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Gate;
 
 class RentalController extends Controller
 {
@@ -39,16 +40,16 @@ class RentalController extends Controller
         return new RentalResource($rentals->create($user, $data)->load('vehicle'));
     }
 
-    public function show(Request $request, Rental $rental): RentalResource
+    public function show(Rental $rental): RentalResource
     {
-        $this->ensureCanAccess($request, $rental);
+        Gate::authorize('view', $rental);
 
         return new RentalResource($rental->load(['user', 'vehicle']));
     }
 
     public function cancel(Request $request, Rental $rental, RentalService $rentals): RentalResource
     {
-        $this->ensureCanAccess($request, $rental);
+        Gate::authorize('cancel', $rental);
 
         return new RentalResource($rentals->changeStatus($rental, RentalStatus::Cancelada, $request->user()));
     }
@@ -56,13 +57,5 @@ class RentalController extends Controller
     public function finish(Rental $rental, RentalService $rentals): RentalResource
     {
         return new RentalResource($rentals->changeStatus($rental, RentalStatus::Finalizada));
-    }
-
-    private function ensureCanAccess(Request $request, Rental $rental): void
-    {
-        /** @var User $user */
-        $user = $request->user();
-
-        abort_if($user->role === Role::Cliente && $rental->user_id !== $user->id, 403);
     }
 }

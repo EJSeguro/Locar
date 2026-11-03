@@ -8,7 +8,6 @@ O valor da diária de cada veículo é 0,15% do seu preço na tabela FIPE, consu
 
 - PHP 8.4 com a extensão `pdo_pgsql`
 - Composer
-- Node 22
 - Banco PostgreSQL ([Neon](https://neon.tech))
 
 ## Setup local
@@ -21,7 +20,7 @@ cd Locar
 composer setup
 ```
 
-O `composer setup` instala as dependências PHP e Node, cria o `.env` a partir do `.env.example`, gera a `APP_KEY` e compila o front. Ele também roda as migrations no SQLite local (`database/database.sqlite`). O banco de verdade é configurado no próximo passo.
+O `composer setup` instala as dependências PHP, cria o `.env` a partir do `.env.example` e gera a `APP_KEY`. Ele também roda as migrations no SQLite local (`database/database.sqlite`). O banco de verdade é configurado no próximo passo.
 
 ### 2. Configurar o `.env`
 
@@ -48,7 +47,7 @@ O seeder cria os usuários `admin@locar.com`, `gestor@locar.com` e `cliente@loca
 composer dev
 ```
 
-Esse comando sobe o servidor em `http://localhost:8000`, a fila e o Vite. Se você só vai mexer na API, `php artisan serve` basta.
+Esse comando sobe o servidor em `http://localhost:8000`. O front é Blade com CSS estático (`public/css/estilo.css`), sem etapa de build.
 
 ### 5. Testar o login
 

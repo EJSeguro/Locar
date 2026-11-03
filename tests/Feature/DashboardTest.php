@@ -1,16 +1,18 @@
 <?php
 
+use App\Enums\Role;
 use App\Models\User;
 
 test('guests are redirected to the login page', function () {
-    $response = $this->get(route('dashboard'));
-    $response->assertRedirect(route('login'));
+    $this->get(route('redirecionar'))->assertRedirect(route('login'));
 });
 
-test('authenticated users can visit the dashboard', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user);
-
-    $response = $this->get(route('dashboard'));
-    $response->assertOk();
-});
+test('users are redirected to their area after login', function (Role $role, string $route) {
+    $this->actingAs(User::factory()->role($role)->create())
+        ->get(route('redirecionar'))
+        ->assertRedirect(route($route));
+})->with([
+    [Role::Admin, 'admin.painel'],
+    [Role::Gestor, 'gestor.veiculos'],
+    [Role::Cliente, 'home'],
+]);

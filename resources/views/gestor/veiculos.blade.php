@@ -66,8 +66,9 @@
 
                                 @csrf
                                 @method('PATCH')
+                                <input type="hidden" name="available" value="{{ $veiculo->available ? 0 : 1 }}">
 
-                                <button type="submit" 
+                                <button type="submit"
                                         class="{{ $veiculo->available ? 'botao-excluir' : 'botao-cadastrar' }}">
                                     {{ $veiculo->available ? 'Desabilitar' : 'Habilitar' }}
                                 </button>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -27,13 +28,12 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    public function destroy(Request $request, User $user): Response
+    public function destroy(Request $request, User $user, UserService $users): Response
     {
-        abort_if($user->is($request->user()), 422, 'Você não pode remover a si mesmo.');
-        abort_if($user->rentals()->exists(), 422, 'Usuário possui locações e não pode ser removido.');
+        /** @var User $admin */
+        $admin = $request->user();
 
-        $user->tokens()->delete();
-        $user->delete();
+        $users->delete($user, $admin);
 
         return response()->noContent();
     }

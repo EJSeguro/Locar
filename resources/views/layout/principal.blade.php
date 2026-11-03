@@ -34,6 +34,8 @@
                     <a href="{{ route('admin.painel') }}">Painel Administrativo</a>
                 @endif
 
+                <a href="{{ route('profile.edit') }}">Minha Conta</a>
+
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit">Sair</button>
