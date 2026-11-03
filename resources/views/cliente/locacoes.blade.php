@@ -8,6 +8,10 @@
 
     <p>Acompanhe aqui suas locações de veículos.</p>
 
+    @if(session('sucesso'))
+        <p>{{ session('sucesso') }}</p>
+    @endif
+
     <table class="tabela-locacoes">
         <thead>
             <tr>
@@ -20,18 +24,33 @@
         </thead>
 
         <tbody>
-            @forelse($locacoes ?? [] as $locacao)
+            @forelse($locacoes as $locacao)
                 <tr>
-                    <td>{{ $locacao->veiculo }}</td>
-                    <td>{{ $locacao->retirada }}</td>
-                    <td>{{ $locacao->devolucao }}</td>
-                    <td>R$ {{ number_format($locacao->valor, 2, ',', '.') }}</td>
-                    <td>{{ $locacao->situacao }}</td>
+                    <td>
+                        {{ $locacao->vehicle->brand }}
+                        {{ $locacao->vehicle->model }}
+                    </td>
+
+                    <td>
+                        {{ \Carbon\Carbon::parse($locacao->start_date)->format('d/m/Y') }}
+                    </td>
+
+                    <td>
+                        {{ \Carbon\Carbon::parse($locacao->end_date)->format('d/m/Y') }}
+                    </td>
+
+                    <td>
+                        R$ {{ number_format($locacao->total, 2, ',', '.') }}
+                    </td>
+
+                    <td>
+                        {{ ucfirst($locacao->status->value) }}
+                    </td>
                 </tr>
             @empty
                 <tr>
                     <td colspan="5">
-                        Nenhuma locação disponível para exibição.
+                        Você ainda não possui nenhuma locação.
                     </td>
                 </tr>
             @endforelse

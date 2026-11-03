@@ -10,7 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-
+use App\Http\Requests\Api\StoreRentalRequest;
+use App\Services\RentalService;
 
 Route::get('/', function () {
     return view('home');
@@ -79,8 +80,24 @@ Route::get('/redirecionar', function () {
 Route::middleware(['auth', 'role:cliente'])->group(function () {
 
     Route::get('/minhas-locacoes', function () {
-        return view('cliente.locacoes');
+        $locacoes = auth()->user()
+            ->rentals()
+            ->with('vehicle')
+            ->latest()
+            ->get();
+        return view('cliente.locacoes', compact('locacoes'));
     })->name('cliente.locacoes');
+
+    Route::post('/locacoes', function (
+        StoreRentalRequest $request,
+        RentalService $rentals
+    ) {
+        $rentals->create($request->user(), $request->validated());
+
+        return redirect()->route('cliente.locacoes')
+            ->with('sucesso', 'Locação realizada com sucesso!');
+
+    })->name('cliente.locacoes.salvar');
 
 });
 
