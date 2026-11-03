@@ -50,7 +50,7 @@ class RentalController extends Controller
     {
         $this->ensureCanAccess($request, $rental);
 
-        return new RentalResource($rentals->changeStatus($rental, RentalStatus::Cancelada));
+        return new RentalResource($rentals->changeStatus($rental, RentalStatus::Cancelada, $request->user()));
     }
 
     public function finish(Rental $rental, RentalService $rentals): RentalResource

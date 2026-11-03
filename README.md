@@ -104,7 +104,7 @@ Todas as rotas ficam em `/api/v1`. Exceto o login, todas exigem o header `Author
 | GET    | `/rentals`                    | autenticado         | Lista locações (cliente vê só as suas)                 |
 | POST   | `/rentals`                    | cliente             | Aluga veículo (`vehicle_id`, `start_date`, `end_date`) |
 | GET    | `/rentals/{id}`               | dono, admin, gestor | Detalha locação                                        |
-| PATCH  | `/rentals/{id}/cancel`        | dono, admin, gestor | Cancela locação ativa                                  |
+| PATCH  | `/rentals/{id}/cancel`        | dono, admin, gestor | Cancela locação ativa (cliente só antes da retirada)   |
 | PATCH  | `/rentals/{id}/finish`        | admin, gestor       | Finaliza locação ativa                                 |
 
 ### Criar gestor

@@ -128,6 +128,19 @@ test('cliente cancels own rental but not others', function () {
     $this->getJson("/api/v1/rentals/{$other->id}")->assertForbidden();
 });
 
+test('cliente cannot cancel from the start date on, gestor can', function () {
+    $cliente = User::factory()->create();
+    $today = Rental::factory()->for($cliente)->create(['start_date' => today(), 'end_date' => today()->addDays(2)]);
+    $ongoing = Rental::factory()->for($cliente)->create(['start_date' => today()->subDay(), 'end_date' => today()->addDay()]);
+
+    Sanctum::actingAs($cliente);
+    $this->patchJson("/api/v1/rentals/{$today->id}/cancel")->assertJsonValidationErrors('status');
+    $this->patchJson("/api/v1/rentals/{$ongoing->id}/cancel")->assertJsonValidationErrors('status');
+
+    Sanctum::actingAs(User::factory()->role(Role::Gestor)->create());
+    $this->patchJson("/api/v1/rentals/{$ongoing->id}/cancel")->assertJsonPath('data.status', 'cancelada');
+});
+
 test('gestor finishes an active rental only once', function () {
     Sanctum::actingAs(User::factory()->role(Role::Gestor)->create());
     $rental = Rental::factory()->create();
