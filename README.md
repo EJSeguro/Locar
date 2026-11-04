@@ -139,6 +139,12 @@ pg_restore --no-owner --no-acl --clean --if-exists -d "$DB_URL_RESTAURO" locar.d
 psql "$DB_URL_RESTAURO" -c "SELECT count(*) FROM rentals;"
 ```
 
+O script `database/backup_restauracao.sh` faz tudo isso de uma vez pelo Docker: gera o `.dump` e o `.sql`, restaura no banco de destino e salva a evidência com a contagem de registros das duas pontas. Os arquivos ficam na pasta `backups/`, que é ignorada pelo Git.
+
+```bash
+DB_URL="postgresql://..." DB_URL_RESTAURO="postgresql://..." bash database/backup_restauracao.sh
+```
+
 Não commite os backups: eles contêm os hashes de senha dos usuários.
 
 ## Rotas web
